@@ -2,6 +2,8 @@
 
 var program = require('commander');
 var moment = require('moment');
+var Table = require('cli-table');
+var _ = require('lodash');
 
 var Gup = require('../lib/gup.js');
 var gup;
@@ -31,5 +33,87 @@ program
       }
     });
   });
+
+  program
+    .version('0.0.1')
+    .command('list')
+    .alias('ls')
+    .description('list existing revisions')
+    .option('-t, --tag [value]', 'gtfs dataset tag')
+    .option('-u, --url [value]', 'use a MongoDB url', 'http://localhost:27017/')
+    .option('-d, --db [value]', 'use a MongoDB database', 'test')
+    .action(function(options){
+      gup = new Gup({
+        url: options.url + '/' + options.db,
+        tag: options.tag
+      });
+      gup.getRevisions(function(e, items){
+        var Table = require('cli-table');
+
+        var table = new Table({
+            head: ['tag', 'rev', 'status', 'start', 'end', 'modified']
+        });
+
+        _.each(items, function(item){
+          table.push([
+            item.tag,
+            item.rev,
+            item.status,
+            moment(item.start).format('YYYY-MM-DD'),
+            moment(item.end).format('YYYY-MM-DD'),
+            moment(item.lastModified).fromNow()
+          ]);
+        });
+
+        console.log(table.toString());
+      });
+    });
+
+  program
+    .version('0.0.1')
+    .command('update [newValue]')
+    .alias('upd')
+    .description('update a property')
+    .option('-p, --property [value]', 'gtfs dataset tag')
+    .option('-t, --tag [value]', 'gtfs dataset tag')
+    .option('-r, --rev [value]', 'gtfs dataset revision')
+    .option('-u, --url [value]', 'use a MongoDB url', 'http://localhost:27017/')
+    .option('-d, --db [value]', 'use a MongoDB database', 'test')
+    .action(function(newValue, options){
+
+      gup = new Gup({
+        url: options.url + '/' + options.db,
+        tag: options.tag
+      });
+
+      switch (options.property){
+        case 'start':
+          var dateValue = moment(newValue, 'YYYY-MM-DD', true); // strict parsing
+          if (!dateValue.isValid()){
+            return console.log('invalid date value')
+          }
+          gup.setStartDate(options.rev, dateValue.toDate(), function(){
+
+          });
+          break;
+        case 'end':
+          var dateValue = moment(newValue, 'YYYY-MM-DD', true); // strict parsing
+          if (!dateValue.isValid()){
+            return console.log('invalid date value')
+          }
+          gup.setEndDate(options.rev, dateValue.toDate(), function(){
+
+          });
+          break;
+        case 'status':
+          gup.setStatus(options.rev, newValue, function(){
+
+          });
+          break;
+        default:
+          console.error('cannot change property ' + options.property);
+          break;
+      }
+    });
 
 program.parse(process.argv);
