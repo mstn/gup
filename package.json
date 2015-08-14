@@ -1,0 +1,22 @@
+{
+  "name": "gup",
+  "version": "0.0.1",
+  "description": "uploader and manager for gtfs datasets",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mstn/gup.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mstn/gup/issues"
+  },
+  "homepage": "https://github.com/mstn/gup",
+  "dependencies": {
+    "commander": "^2.8.1"
+  }
+}
