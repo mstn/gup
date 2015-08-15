@@ -1,5 +1,60 @@
 # gup
 uploader and manager for gtfs datasets
 
+> WIP. This project is in a very early stage. API can change without notice and BUGS haunt the code.
 
-Inspired by [node-gtfs](https://github.com/brendannee/node-gtfs).
+* upload gtfs zip files to MongoDB
+* handle different versions of the same datasets
+* datasets are tagged with a name
+
+This package addresses the following problems
+
+* datasets from different sources may have the same ids; so a sort of namespace for each dataset is needed;
+* datasets can change (e.g. suppressed stops, minor fare changes);
+* shit happens and in this case we want to be able to come back to an old safe state as soon as possible;
+* clients could be interested in different versions of the same dataset.
+
+The approach we followed is to upload every version of each dataset to MongoDB where data are marked with a tag and a revision number associated to a single upload.
+
+In the far future we are going to implement a more efficient revision system where individual changes are tracked and redundancy is avoided.
+
+## CLI
+
+Upload a dataset to MongoDB
+
+     gup load -u mongodb://localhost:27017 -d test -t agency_one_suburban -s 2015-09-01 -e 2016-12-31 dataset1.zip
+
+List existing dataset with revisions and tags
+
+     gup list -u mongodb://localhost:27017 -d test -t agency_one_suburban
+
+Update a meta-property for an existing dataset
+
+     gup update -u mongodb://localhost:27017 -d test -t agency_one_suburban -r 9 -p start 2010-08-12
+
+
+## Examples
+
+Suppose we want to manage serveral gtfs datasets from different sources. For example,
+
+* dataset1 from agency1 that covers suburban transport;
+* dataset2 from agency1 that covers urban transport;
+* dataset3 from agency2.
+
+We can upload the three datasets with a tag and period of validity.
+
+     gup load -u mongodb://localhost:27017 -d test -t agency_one_suburban -s 2015-09-01 -e 2016-12-31 dataset1.zip
+
+     gup load -u mongodb://localhost:27017 -d test -t agency_one_urban -s 2015-09-01 -e 2016-12-31 dataset2.zip
+
+     gup load -u mongodb://localhost:27017 -d test -t agency_two -s 2015-09-01 -e 2016-12-31 dataset3.zip
+
+A tag identifies a datasets and, when a dataset with an existing tag is uploaded a second time, a new entry with the same tag but larger revision number is added.
+
+In this way no data is deleted and it is possible to switch to an older version of the same dataset.
+
+A client application is supposed to restrict searches to a pair of tag and revision for each gtfs entity.
+
+## Credits
+
+Followed [node-gtfs](https://github.com/brendannee/node-gtfs) implementation, but the goal of this project is different.
