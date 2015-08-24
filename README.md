@@ -3,22 +3,46 @@ uploader and manager for gtfs datasets
 
 > WIP. This project is in a very early stage. API can change without notice and BUGS haunt the code.
 
-* upload gtfs zip files to MongoDB
-* handle different versions of the same datasets
-* datasets are tagged with a name
+What it does:
+
+* upload gtfs zip files to MongoDB;
+* handle different versions of the same datasets;
+* datasets are tagged with a name.
+
+What it doesn't:
+
+* query gtfs datasets;
+* define spatial or non spatial indexes on ids;
+* define abstract models on the top to gtfs entities.
+
+The last points are supposed to be handled at the application level.
+
+## Aim
 
 This package addresses the following problems
 
 * datasets from different sources may have the same ids; so a sort of namespace for each dataset is needed;
 * datasets can change (e.g. suppressed stops, minor fare changes);
 * shit happens and in this case we want to be able to come back to an old safe state as soon as possible;
-* clients could be interested in different versions of the same dataset.
+* clients could be interested in different versions of the same dataset (e.g. development and production environments).
 
 The approach we followed is to upload every version of each dataset to MongoDB where data are marked with a tag and a revision number associated to a single upload.
 
 In the far future we are going to implement a more efficient revision system where individual changes are tracked and redundancy is avoided.
 
+## Getting started
+
+Install
+
+    git clone https://github.com/mstn/gup.git
+    cd gup
+    npm install
+
+Make sure that the target MongoDB is up and running.  
+
 ## CLI
+
+Executable file is in bin directory. You might want to add this directory to your PATH.
 
 Upload a dataset to MongoDB
 
@@ -57,4 +81,8 @@ A client application is supposed to restrict searches to a pair of tag and revis
 
 ## Credits
 
-Followed [node-gtfs](https://github.com/brendannee/node-gtfs) implementation, but the goal of this project is different.
+Followed [node-gtfs](https://github.com/brendannee/node-gtfs/blob/master/scripts/download.js) implementation, but the goal of this project is different.
+
+## License
+
+MIT
