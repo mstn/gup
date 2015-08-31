@@ -1,6 +1,6 @@
 {
   "name": "gup",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "uploader and manager for gtfs datasets",
   "main": "index.js",
   "scripts": {
