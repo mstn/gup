@@ -56,6 +56,15 @@ Update a meta-property for an existing dataset
 
      gup update -u mongodb://localhost:27017 -d test -t agency_one_suburban -r 9 -p start 2010-08-12
 
+### Zone file
+
+Some GTFS files (e.g. fare_rules, stops) can have an optional field called zone_id. This field is just a unique identifier for fare zones. The standard does not say more about fare zones.
+
+However, it is useful to have a reference table with more information about fare zones (e.g. name and description for each zone). For this reason, we can specify an additional option in order to include a zone file in our dataset.
+
+     gup update -u mongodb://localhost:27017 -d test -t agency_one_suburban -r 9 -p start 2010-08-12 -z zones.txt
+
+Zones.txt is an arbitrary csv file with a zone_id field. The definition of the other fields is left to users.
 
 ## Examples
 
