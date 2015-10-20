@@ -18,9 +18,10 @@ program
   .option('-e, --end [value]', 'use a end date')
   .option('-u, --url [value]', 'use a MongoDB url', 'http://localhost:27017/')
   .option('-d, --db [value]', 'use a MongoDB database', 'test')
+  .option('-o, --timeout [value]', 'set a timeout for MongoDB connection (ms)', '30000')
   .action(function(filepath, options){
     gup = new Gup({
-      url: options.url + '/' + options.db,
+      url: options.url + '/' + options.db + '?connectTimeoutMS=' + options.timeout + '&socketTimeoutMS=' + options.timeout,
       tag: options.tag,
       zones: options.zones,
       start:moment(options.start).toDate(),
